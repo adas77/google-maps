@@ -1,6 +1,6 @@
-import fs from "fs";
+import { randomUUID } from "crypto";
 import csv from "csv-parser";
-import { randomInt } from "crypto";
+import fs from "fs";
 
 export async function readCSVFile(filePath: string): Promise<object[]> {
   const results: object[] = [];
@@ -16,28 +16,37 @@ export async function readCSVFile(filePath: string): Promise<object[]> {
 
 export async function customCSV(
   filePath: string,
-  randomize?: number
+  randomize = false
 ): Promise<Pair[]> {
+  const rand = () => (randomize ? Math.random() / 10 : 0);
+  const date = (date: string) => new Date(Date.parse(date));
+
   const csv = await readCSVFile(filePath);
 
   const pairs: Pair[] = csv.map((r) => {
-    const val: string = Object.values(r)[0];
-    const s = val.split(";");
-    const rand = randomize && randomize >= 1 ? randomInt(randomize) : 0;
+    const val: string[] = Object.values(r)[0].split(";");
 
-    const lat_s: number = +s[15] + rand;
-    const lat_e: number = +s[16] + rand;
-    const lng_s: number = +s[17] + rand;
-    const lng_e: number = +s[18] + rand;
+    const timestamp_s: Date = date(val[5]);
+    const timestamp_e: Date = date(val[6]);
+
+    const lat_s: number = +val[15] + rand();
+    const lat_e: number = +val[16] + rand();
+    const lng_s: number = +val[17] + rand();
+    const lng_e: number = +val[18] + rand();
+
     const pair: Pair = {
       a: {
         lat: lat_s,
         lng: lng_s,
+        timestamp: timestamp_s,
       },
       b: {
         lat: lat_e,
         lng: lng_e,
+        timestamp: timestamp_e,
       },
+      id: randomUUID(),
+      visible: false,
     };
     return pair;
   });

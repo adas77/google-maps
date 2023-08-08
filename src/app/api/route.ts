@@ -3,8 +3,8 @@ import { customCSV } from "../utils/csv";
 
 export async function GET() {
   const csv = await customCSV(
-    "doc/Czestotliwosc_tras_do_analizy_Petrotel_Q1.2023.csv",
-    0
+    "doc/Czestotliwosc_tras_do_analizy_Petrotel_Q2.2023.csv",
+    true
   );
 
   console.log(csv);
