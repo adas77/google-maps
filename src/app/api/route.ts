@@ -2,11 +2,7 @@ import { NextResponse } from "next/server";
 import { customCSV, handleFormData } from "../utils/csv";
 
 export async function GET() {
-  const csv = await customCSV(
-    "doc/Czestotliwosc_tras_do_analizy_Petrotel_Q2.2023.csv",
-    false
-  );
-
+  const csv = await customCSV("doc/example.csv");
   return NextResponse.json(csv);
 }
 

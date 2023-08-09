@@ -1,16 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
+import { formatDate, formatLat } from "../utils/format";
 import { EQueryKeys } from "../utils/queryClient";
 import Uploader from "./Uploader";
-
-const PointTable = ({ lat, lng, timestamp }: Point) => {
-  return (
-    <div>
-      <p>lat: {lat}</p>
-      <p>lng: {lng}</p>
-      <p>tms: {JSON.stringify(timestamp)}</p>
-    </div>
-  );
-};
 
 const PairTable = ({ a, b, id, visible }: Pair) => {
   const queryClient = useQueryClient();
@@ -30,18 +21,26 @@ const PairTable = ({ a, b, id, visible }: Pair) => {
       queryClient.setQueryData([EQueryKeys.maps], update);
     }
   };
+
   return (
-    <div
-      onClick={() => onClickAction()}
-      className="cursor-pointer bg-slate-600 border-2"
-    >
-      <button>{visible ? "X" : "O"}</button>
-      <div className="grid grid-cols-2">
-        <PointTable {...a} />
-        <PointTable {...b} />
-        <p>visible:{JSON.stringify(visible)}</p>
-      </div>
-    </div>
+    <tbody>
+      <tr onClick={() => onClickAction()} className="cursor-pointer">
+        <th>
+          <input
+            type="checkbox"
+            checked={visible}
+            readOnly
+            className="checkbox"
+          />
+        </th>
+        <td>{formatLat(a.lat)}</td>
+        <td>{formatLat(a.lng)}</td>
+        <td>{formatDate(a.timestamp)}</td>
+        <td>{formatLat(b.lat)}</td>
+        <td>{formatLat(b.lng)}</td>
+        <td>{formatDate(b.timestamp)}</td>
+      </tr>
+    </tbody>
   );
 };
 type Props = {
@@ -50,11 +49,26 @@ type Props = {
 
 const ViewTable = ({ pairs }: Props) => {
   return (
-    <div>
+    <div className="grid">
       <Uploader />
-      {pairs.map((pair) => (
-        <PairTable key={JSON.stringify(pair.a.timestamp)} {...pair} />
-      ))}
+      <div className="min-w-fit overflow-y-scroll">
+        <table className="table table-xs table-pin-rows">
+          <thead>
+            <tr>
+              <th>show</th>
+              <td>a.lat</td>
+              <td>a.lng</td>
+              <td>a.date</td>
+              <td>b.lat</td>
+              <td>b.lng</td>
+              <td>b.date</td>
+            </tr>
+          </thead>
+          {pairs.map((pair) => (
+            <PairTable key={pair.id} {...pair} />
+          ))}
+        </table>
+      </div>
     </div>
   );
 };

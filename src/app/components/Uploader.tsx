@@ -9,7 +9,6 @@ import { EQueryKeys } from "../utils/queryClient";
 
 const Uploader = () => {
   const queryClient = useQueryClient();
-
   const [file, setFile] = useState<File | undefined>(undefined);
   const callAPI = async (file: File) => {
     try {
@@ -20,11 +19,10 @@ const Uploader = () => {
           "Content-Type": `multipart/form-data`,
         },
       });
-      const data = await res.data;
-      console.log("data", data);
+      const data: Pair[] = await res.data;
       return data;
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 
@@ -39,7 +37,7 @@ const Uploader = () => {
   });
 
   return (
-    <div className="p-1">
+    <div className="p-5">
       <FileUploader
         handleChange={(file: any) => {
           setFile(file as File);
@@ -48,6 +46,7 @@ const Uploader = () => {
         label={"Drag & Drop or click to upload CSV file."}
       />
       <button
+        className="mt-1"
         disabled={isLoading}
         onClick={() => {
           file && mutate(file);
