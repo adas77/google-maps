@@ -1,4 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
+import { EQueryKeys } from "../utils/queryClient";
+import Uploader from "./Uploader";
 
 const PointTable = ({ lat, lng, timestamp }: Point) => {
   return (
@@ -14,30 +16,32 @@ const PairTable = ({ a, b, id, visible }: Pair) => {
   const queryClient = useQueryClient();
 
   const onClickAction = () => {
-    const data: Pair[] | undefined = queryClient.getQueryData(["maps"]);
+    const data: Pair[] | undefined = queryClient.getQueryData([
+      EQueryKeys.maps,
+    ]);
     if (data) {
-      console.log(data);
       const copy = [...data];
-      console.log(copy);
-
       const update = copy.map((p) => {
         if (p.id === id) {
           return { ...p, visible: !p.visible };
         }
         return p;
       });
-      queryClient.setQueryData(["maps"], update);
+      queryClient.setQueryData([EQueryKeys.maps], update);
     }
   };
   return (
-    <>
-      <button onClick={() => onClickAction()}>{visible ? "X" : "O"}</button>
+    <div
+      onClick={() => onClickAction()}
+      className="cursor-pointer bg-slate-600 border-2"
+    >
+      <button>{visible ? "X" : "O"}</button>
       <div className="grid grid-cols-2">
         <PointTable {...a} />
         <PointTable {...b} />
         <p>visible:{JSON.stringify(visible)}</p>
       </div>
-    </>
+    </div>
   );
 };
 type Props = {
@@ -47,6 +51,7 @@ type Props = {
 const ViewTable = ({ pairs }: Props) => {
   return (
     <div>
+      <Uploader />
       {pairs.map((pair) => (
         <PairTable key={JSON.stringify(pair.a.timestamp)} {...pair} />
       ))}
