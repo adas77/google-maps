@@ -10,6 +10,8 @@ import { EQueryKeys } from "../utils/queryClient";
 const Uploader = () => {
   const queryClient = useQueryClient();
   const [file, setFile] = useState<File | undefined>(undefined);
+  type UploadState = "wrong" | "yes";
+  const [uploadState, setUploadState] = useState<UploadState>("yes");
   const callAPI = async (file: File) => {
     try {
       const formData = new FormData();
@@ -29,9 +31,11 @@ const Uploader = () => {
   const { isLoading, mutate } = useMutation(callAPI, {
     onSuccess: (data) => {
       queryClient.setQueryData([EQueryKeys.maps], data);
+      setFile(undefined);
       toast.success("Uploaded");
     },
     onError: () => {
+      setFile(undefined);
       toast.error("Failed to upload");
     },
   });
@@ -40,20 +44,59 @@ const Uploader = () => {
     <div className="p-5">
       <FileUploader
         handleChange={(file: any) => {
-          setFile(file as File);
+          if (file.type === CSV_FORM_CONFIG.mime) {
+            setFile(file as File);
+            setUploadState("yes");
+          } else {
+            setUploadState("wrong");
+          }
         }}
         name="file"
         label={"Drag & Drop or click to upload CSV file."}
-      />
-      <button
-        className="mt-1"
-        disabled={isLoading}
-        onClick={() => {
-          file && mutate(file);
-        }}
       >
-        Send
-      </button>
+        {uploadState === "yes" && file ? (
+          <p className="cursor-pointer">
+            Upload <b> {file.name}</b> ?
+          </p>
+        ) : uploadState === "wrong" ? (
+          <p className="cursor-pointer underline">
+            Wrong extension... choose CSV
+          </p>
+        ) : (
+          this
+        )}
+      </FileUploader>
+      <div className="grid grid-cols-2 gap-2 mt-2">
+        {file ? (
+          <>
+            <button
+              className="bg-slate-100 rounded-md text-center"
+              disabled={isLoading || file === undefined}
+              onClick={() => {
+                file && mutate(file);
+              }}
+            >
+              Yes
+            </button>
+            <button
+              className="bg-slate-300 rounded-md text-center"
+              disabled={isLoading || file === undefined}
+              onClick={() => {
+                setFile(undefined);
+              }}
+            >
+              No
+            </button>
+          </>
+        ) : (
+          <a
+            href="/example.csv"
+            className="bg-slate-100 rounded-md text-center"
+          >
+            Download example
+          </a>
+        )}
+      </div>
     </div>
   );
 };
