@@ -1,5 +1,5 @@
 import { useJsApiLoader } from "@react-google-maps/api";
-
+// FIXME add api key
 // const apiKey = process.env.API_KEY!;
 // console.log(apiKey);
 // if (!apiKey) {
@@ -8,6 +8,7 @@ import { useJsApiLoader } from "@react-google-maps/api";
 export const useGoogleLoader = () => {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
+    googleMapsApiKey: undefined as any,
   });
   return { isLoaded };
 };
