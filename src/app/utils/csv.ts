@@ -14,8 +14,8 @@ export async function customCSV(
 
   const pairs: Pair[] = csv.map((r) => {
     const val: string[] = Object.values(r)[0].split(";");
-    const timestamp_s: Date = strToDate(val[5]);
-    const timestamp_e: Date = strToDate(val[6]);
+    const timestamp_s: number = strToDate(val[5]);
+    const timestamp_e: number = strToDate(val[6]);
     const lat_s: number = +val[15] + rand();
     const lat_e: number = +val[16] + rand();
     const lng_s: number = +val[17] + rand();

@@ -1,12 +1,15 @@
 import { useQueryClient } from "@tanstack/react-query";
+import useMap from "../hooks/useMap";
 import { formatDate, formatLat } from "../utils/format";
+import { formatRouteStats } from "../utils/geo";
 import { EQueryKeys } from "../utils/queryClient";
 import Uploader from "./Uploader";
 
 const PairTable = ({ a, b, id, visible }: Pair) => {
+  const { updateCenter } = useMap();
   const queryClient = useQueryClient();
 
-  const onClickAction = () => {
+  const onClickChangePairVisibility = () => {
     const data: Pair[] | undefined = queryClient.getQueryData([
       EQueryKeys.maps,
     ]);
@@ -22,23 +25,53 @@ const PairTable = ({ a, b, id, visible }: Pair) => {
     }
   };
 
+  const onClickUpdateMapCenter = ({ lat, lng }: Point) => {
+    updateCenter({
+      lat,
+      lng,
+      timestamp: Date.now(),
+    });
+  };
+
   return (
-    <tbody>
-      <tr onClick={() => onClickAction()} className="cursor-pointer">
+    <tbody
+      className="hover:bg-slate-300 cursor-pointer"
+      onClick={() => {
+        onClickUpdateMapCenter({
+          lat: a.lat,
+          lng: a.lng,
+          timestamp: a.timestamp,
+        });
+      }}
+    >
+      <tr>
         <th>
           <input
             type="checkbox"
             checked={visible}
-            readOnly
+            onChange={() => {
+              onClickChangePairVisibility();
+            }}
+            onClick={(e) => e.stopPropagation()}
             className="checkbox"
           />
         </th>
-        <td>{formatLat(a.lat)}</td>
-        <td>{formatLat(a.lng)}</td>
+        <td className="text-green-600 ">{formatLat(a.lat)}</td>
+        <td className="text-green-600 ">{formatLat(a.lng)}</td>
         <td>{formatDate(a.timestamp)}</td>
-        <td>{formatLat(b.lat)}</td>
-        <td>{formatLat(b.lng)}</td>
+        <td className="text-red-700">{formatLat(b.lat)}</td>
+        <td className="text-red-700">{formatLat(b.lng)}</td>
         <td>{formatDate(b.timestamp)}</td>
+        <td>
+          <b>
+            {
+              formatRouteStats(
+                { lat: a.lat, lng: a.lng, timestamp: a.timestamp },
+                { lat: b.lat, lng: b.lng, timestamp: b.timestamp }
+              ).distance
+            }
+          </b>
+        </td>
       </tr>
     </tbody>
   );
@@ -62,6 +95,7 @@ const ViewTable = ({ pairs }: Props) => {
               <td>b.lat</td>
               <td>b.lng</td>
               <td>b.date</td>
+              <td>km</td>
             </tr>
           </thead>
           {pairs.map((pair) => (

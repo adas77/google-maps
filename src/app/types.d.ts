@@ -1,7 +1,7 @@
 type Point = {
   lat: number;
   lng: number;
-  timestamp: Date;
+  timestamp: number;
 };
 
 type Pair = {

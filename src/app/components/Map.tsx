@@ -1,19 +1,17 @@
-import { GoogleMap, Polyline } from "@react-google-maps/api";
+import { GoogleMap, Marker, Polyline } from "@react-google-maps/api";
 import React from "react";
+import useMap from "../hooks/useMap";
+import { formatDate, formatLat } from "../utils/format";
 
 type Props = {
   pairs: Pair[];
 };
 
 const Map = ({ pairs }: Props) => {
+  const { center } = useMap();
   const containerStyle = {
     width: "100vw",
     height: "100vh",
-  };
-  const center: Point = {
-    lat: pairs ? pairs[0].a.lat : 0,
-    lng: pairs ? pairs[0].a.lng : 0,
-    timestamp: pairs ? pairs[0].a.timestamp : new Date(Date.now()),
   };
 
   return (
@@ -21,13 +19,32 @@ const Map = ({ pairs }: Props) => {
       {pairs
         .filter((p) => p.visible === true)
         .map(({ a, b }, i) => (
-          <Polyline
-            key={i}
-            path={[
-              { lat: a.lat, lng: a.lng },
-              { lat: b.lat, lng: b.lng },
-            ]}
-          />
+          <div key={i}>
+            <Polyline
+              path={[
+                { lat: a.lat, lng: a.lng },
+                { lat: b.lat, lng: b.lng },
+              ]}
+              options={{
+                strokeColor: "#1a1a1a",
+                strokeWeight: 2,
+              }}
+            />
+            <Marker
+              position={{ lat: a.lat, lng: a.lng }}
+              title={`${formatLat(a.lat)}:${formatLat(a.lng)}\n${formatDate(
+                a.timestamp
+              )}`}
+              icon={"map/start.svg"}
+            />
+            <Marker
+              position={{ lat: b.lat, lng: b.lng }}
+              title={`${formatLat(b.lat)}:${formatLat(b.lng)}\n${formatDate(
+                b.timestamp
+              )}`}
+              icon={"map/end.svg"}
+            />
+          </div>
         ))}
     </GoogleMap>
   );

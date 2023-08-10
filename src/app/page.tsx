@@ -8,9 +8,11 @@ import Map from "./components/Map";
 import ViewTable from "./components/ViewTable";
 import { EQueryKeys } from "./utils/queryClient";
 import { useGoogleLoader } from "./utils/useGoogleLoader";
+import useMap from "./hooks/useMap";
 
 function MyComponent() {
   const { isLoaded } = useGoogleLoader();
+  const { updateCenter } = useMap();
   const callAPI = async () => {
     try {
       const res = await axios.get("/api");
@@ -20,7 +22,11 @@ function MyComponent() {
       console.log(err);
     }
   };
-  const { data, error } = useQuery([EQueryKeys.maps], () => callAPI());
+  const { data, error } = useQuery([EQueryKeys.maps], () => callAPI(), {
+    onSuccess: (data) => {
+      data && updateCenter(data[0].a);
+    },
+  });
 
   if (!isLoaded || !data) return <Loader />;
 

@@ -4,10 +4,12 @@ import { toast } from "react-toastify";
 
 import axios from "axios";
 import { FileUploader } from "react-drag-drop-files";
+import useMap from "../hooks/useMap";
 import CSV_FORM_CONFIG from "../utils/consts";
 import { EQueryKeys } from "../utils/queryClient";
 
 const Uploader = () => {
+  const { updateCenter } = useMap();
   const queryClient = useQueryClient();
   const [file, setFile] = useState<File | undefined>(undefined);
   type UploadState = "wrong" | "yes";
@@ -32,6 +34,7 @@ const Uploader = () => {
     onSuccess: (data) => {
       queryClient.setQueryData([EQueryKeys.maps], data);
       setFile(undefined);
+      data && updateCenter(data[0].a);
       toast.success("Uploaded");
     },
     onError: () => {
