@@ -1,33 +1,29 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import React from "react";
-import Loader from "./components/Loader";
-import Map from "./components/Map";
-import ViewTable from "./components/ViewTable";
-import { EQueryKeys } from "./utils/queryClient";
-import { useGoogleLoader } from "./utils/useGoogleLoader";
+import Loader from "./components/atoms/Loader";
+import Map from "./components/maps/Map";
+import ViewTable from "./components/table/ViewTable";
+import { useGoogleLoader } from "./hooks/useGoogleLoader";
 import useMap from "./hooks/useMap";
+import mapService from "./service/mapSevrice";
+import { EQueryKeys } from "./utils/queryClient";
 
-function MyComponent() {
+function App() {
   const { isLoaded } = useGoogleLoader();
   const { updateCenter } = useMap();
-  const callAPI = async () => {
-    try {
-      const res = await axios.get("/api");
-      const data: Pair[] = await res.data;
-      return data;
-    } catch (err) {
-      console.log(err);
+
+  const { data, error } = useQuery(
+    [EQueryKeys.maps],
+    mapService.getDefaultCSV,
+    {
+      onSuccess: (data) => {
+        data && updateCenter(data[0].a);
+      },
+      refetchOnWindowFocus: false,
     }
-  };
-  const { data, error } = useQuery([EQueryKeys.maps], () => callAPI(), {
-    onSuccess: (data) => {
-      data && updateCenter(data[0].a);
-    },
-    refetchOnWindowFocus: false,
-  });
+  );
 
   if (!isLoaded || !data) return <Loader />;
 
@@ -41,4 +37,4 @@ function MyComponent() {
   );
 }
 
-export default React.memo(MyComponent);
+export default React.memo(App);

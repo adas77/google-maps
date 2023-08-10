@@ -1,9 +1,4 @@
-type RouteStats = {
-  distanceInKm: number;
-  timeInSeconds: number;
-};
-
-function calculateDistanceInMeteres(
+export function calculateRouteStats(
   { lat: lat1, lng: lng1, timestamp: timestamp1 }: Point,
   { lat: lat2, lng: lng2, timestamp: timestamp2 }: Point
 ): RouteStats {
@@ -24,23 +19,5 @@ function calculateDistanceInMeteres(
   return {
     distanceInKm,
     timeInSeconds,
-  };
-}
-
-type RouteStatsFormated = {
-  distance: string;
-  time: string;
-};
-
-export function formatRouteStats(p1: Point, p2: Point): RouteStatsFormated {
-  const { distanceInKm, timeInSeconds } = calculateDistanceInMeteres(
-    { ...p1 },
-    { ...p2 }
-  );
-  const distance = `${distanceInKm.toFixed(1)}`;
-  const time = new Date(timeInSeconds * 1000).toISOString();
-  return {
-    distance,
-    time,
   };
 }

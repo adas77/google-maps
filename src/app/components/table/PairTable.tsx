@@ -1,9 +1,8 @@
+import useMap from "@/app/hooks/useMap";
+import { formatDate, formatLat } from "@/app/utils/format";
+import { formatRouteStats } from "@/app/utils/format";
+import { EQueryKeys } from "@/app/utils/queryClient";
 import { useQueryClient } from "@tanstack/react-query";
-import useMap from "../hooks/useMap";
-import { formatDate, formatLat } from "../utils/format";
-import { formatRouteStats } from "../utils/geo";
-import { EQueryKeys } from "../utils/queryClient";
-import Uploader from "./Uploader";
 
 const PairTable = ({ a, b, id, visible }: Pair) => {
   const { updateCenter } = useMap();
@@ -76,35 +75,5 @@ const PairTable = ({ a, b, id, visible }: Pair) => {
     </tbody>
   );
 };
-type Props = {
-  pairs: Pair[];
-};
 
-const ViewTable = ({ pairs }: Props) => {
-  return (
-    <div className="grid">
-      <Uploader />
-      <div className="min-w-fit overflow-y-scroll">
-        <table className="table table-xs table-pin-rows">
-          <thead>
-            <tr>
-              <th>show</th>
-              <td>a.lat</td>
-              <td>a.lng</td>
-              <td>a.date</td>
-              <td>b.lat</td>
-              <td>b.lng</td>
-              <td>b.date</td>
-              <td>km</td>
-            </tr>
-          </thead>
-          {pairs.map((pair) => (
-            <PairTable key={pair.id} {...pair} />
-          ))}
-        </table>
-      </div>
-    </div>
-  );
-};
-
-export default ViewTable;
+export default PairTable;

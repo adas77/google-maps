@@ -2,35 +2,20 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-import axios from "axios";
+import useMap from "@/app/hooks/useMap";
+import mapService from "@/app/service/mapSevrice";
+import CSV_FORM_CONFIG from "@/app/utils/consts";
+import { EQueryKeys } from "@/app/utils/queryClient";
 import { FileUploader } from "react-drag-drop-files";
-import useMap from "../hooks/useMap";
-import CSV_FORM_CONFIG from "../utils/consts";
-import { EQueryKeys } from "../utils/queryClient";
 
 const Uploader = () => {
   const { updateCenter } = useMap();
   const queryClient = useQueryClient();
-  const [file, setFile] = useState<File | undefined>(undefined);
-  type UploadState = "wrong" | "yes";
-  const [uploadState, setUploadState] = useState<UploadState>("yes");
-  const callAPI = async (file: File) => {
-    try {
-      const formData = new FormData();
-      formData.append(CSV_FORM_CONFIG.form_key, file);
-      const res = await axios.post("/api", formData, {
-        headers: {
-          "Content-Type": `multipart/form-data`,
-        },
-      });
-      const data: Pair[] = await res.data;
-      return data;
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
-  const { isLoading, mutate } = useMutation(callAPI, {
+  const [file, setFile] = useState<File | undefined>(undefined);
+  const [uploadState, setUploadState] = useState<UploadState>("yes");
+
+  const { isLoading, mutate } = useMutation(mapService.uploadCSV, {
     onSuccess: (data) => {
       queryClient.setQueryData([EQueryKeys.maps], data);
       setFile(undefined);

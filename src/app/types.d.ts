@@ -10,3 +10,15 @@ type Pair = {
   a: Point;
   b: Point;
 };
+
+type UploadState = "wrong" | "yes";
+
+type RouteStats = {
+  distanceInKm: number;
+  timeInSeconds: number;
+};
+
+type RouteStatsFormated = {
+  distance: string;
+  time: string;
+};
