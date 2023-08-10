@@ -26,6 +26,7 @@ function MyComponent() {
     onSuccess: (data) => {
       data && updateCenter(data[0].a);
     },
+    refetchOnWindowFocus: false,
   });
 
   if (!isLoaded || !data) return <Loader />;
