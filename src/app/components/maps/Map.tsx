@@ -25,8 +25,8 @@ const Map = ({ pairs }: Props) => {
         .map(({ a, b }, i) => (
           <div key={i}>
             <Polyline p1={a} p2={b} />
-            <Marker point={{ ...a }} type={"start"} />
-            <Marker point={{ ...b }} type={"end"} />
+            <Marker point={a} type={"start"} />
+            <Marker point={b} type={"end"} />
           </div>
         ))}
     </GoogleMap>

@@ -1,6 +1,5 @@
 import useMap from "@/app/hooks/useMap";
-import { formatDate, formatLat } from "@/app/utils/format";
-import { formatRouteStats } from "@/app/utils/format";
+import { formatDate, formatLat, formatRouteStats } from "@/app/utils/format";
 import { EQueryKeys } from "@/app/utils/queryClient";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -36,11 +35,7 @@ const PairTable = ({ a, b, id, visible }: Pair) => {
     <tbody
       className="hover:bg-slate-300 cursor-pointer"
       onClick={() => {
-        onClickUpdateMapCenter({
-          lat: a.lat,
-          lng: a.lng,
-          timestamp: a.timestamp,
-        });
+        onClickUpdateMapCenter(a);
       }}
     >
       <tr>
@@ -62,14 +57,7 @@ const PairTable = ({ a, b, id, visible }: Pair) => {
         <td className="text-red-700">{formatLat(b.lng)}</td>
         <td>{formatDate(b.timestamp)}</td>
         <td>
-          <b>
-            {
-              formatRouteStats(
-                { lat: a.lat, lng: a.lng, timestamp: a.timestamp },
-                { lat: b.lat, lng: b.lng, timestamp: b.timestamp }
-              ).distance
-            }
-          </b>
+          <b>{formatRouteStats(a, b).distance}</b>
         </td>
       </tr>
     </tbody>
